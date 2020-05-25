@@ -6,13 +6,22 @@ import java.awt.BorderLayout;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import javax.swing.JPanel;
+import javax.swing.JTextField;
 import javax.swing.BoxLayout;
 import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+
 import javax.swing.UIManager;
 import java.awt.Font;
+import java.awt.GridLayout;
 import java.awt.Image;
 
+import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
+
+import cn.homework.util.CountClock;
+
 import java.awt.Toolkit;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
@@ -26,90 +35,72 @@ import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 
 public class LIANXI_view {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	
-	private JFrame LIANXI_view;
 	
+	private final boolean INCREASE = true;			//计时方向
+	private JFrame jf = new JFrame();
 	
-	public  LIANXI_view() {
-		initialize();
+	public LIANXI_view(Dimension location, Dimension size) {
+		jf.setLocation(location.width, location.height);
+		jf.setSize(size);
+		jf.setTitle("练习模式");
+		
+		
+		init();
+		jf.setVisible(true);
 	}
 	
 	
 	public void closeThis(){
-		LIANXI_view.dispose();
+		
 	}
 	
 	
-	private void initialize() {
+	public void init() {
+		JPanel jpanelTime = new JPanel();
+		CountClock cc = new CountClock(0, jpanelTime, null, INCREASE);
+		cc.init();
+		
+		JPanel top = new JPanel();
+		JPanel buttom = new JPanel();
+		JButton back = new JButton("返回");
+		back.setPreferredSize(new Dimension(100, 100));
+		
+		top.setLayout(new BorderLayout());
+		top.add(jpanelTime);
+		top.add(back, BorderLayout.EAST);
+		
+		jf.add(top, BorderLayout.NORTH);
+		
+		JPanel previewArea = new JPanel();
+		JPanel operateArea = new JPanel();
+		
+		previewArea.setBackground(Color.pink);
+		operateArea.setBackground(Color.orange);
+		
+		buttom.setLayout(new GridLayout(1, 2));
+		buttom.add(previewArea);
+		buttom.add(operateArea);
 		
 		
-		LIANXI_view = new JFrame();//框架的相关设置
-		LIANXI_view.setIconImage(Toolkit.getDefaultToolkit().getImage(PINTU.class.getResource("/images/0427f65039b23489be76046b1cba8659.jpg")));
-		LIANXI_view.getContentPane().setBackground(Color.WHITE);
-		LIANXI_view.setTitle("练习模式");
-		LIANXI_view.setBackground(Color.WHITE);//框架背景
-		LIANXI_view.setBounds(100, 100, 450, 300);
-		LIANXI_view.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		LIANXI_view.getContentPane().setLayout(null);//将框架的布局管理器关掉
-		LIANXI_view.setVisible(true);
-		
-		
-		JButton Button_1 = new JButton("提交");//提交的按钮
-		Button_1.setFont(new Font("黑体", Font.PLAIN, 15));//字体设置
-		Button_1.setForeground(Color.WHITE);//字体颜色
-		Button_1.setBackground(Color.GREEN);//按钮背景色
-		Button_1.addActionListener(new ActionListener() {//提交按钮事件,即扩展具体功能
-			public void actionPerformed(ActionEvent e) {
-	       
-				
-			   
-				
-			}
-		});
-		Button_1.setBounds(115, 260, 70, 30);//按钮位置
-		LIANXI_view.getContentPane().add(Button_1);//将按钮加入框架
-		
-		
-		
-		JButton Button_2 = new JButton("重置");//重置的按钮
-		Button_2.addActionListener(new ActionListener() {//重置的按钮事件，即扩展具体功能
-			public void actionPerformed(ActionEvent e) {
-				
-				
-				
-			}
-		});
-		Button_2.setFont(new Font("黑体", Font.PLAIN, 15));//字体设置
-		Button_2.setBackground(Color.GREEN);//按钮背景色
-		Button_2.setForeground(Color.WHITE);//字体颜色
-		Button_2.setBounds(230,  260, 70, 30);//按钮位置
-		LIANXI_view.getContentPane().add(Button_2);//将按钮加入框架
-		
-		
-		JLabel Label_yulan_photo = new JLabel("预览图");
-		Label_yulan_photo.setBackground(Color.BLUE);
-		Label_yulan_photo.setBounds(300, 100, 150, 100);
-		LIANXI_view.getContentPane().add(Label_yulan_photo);
+		jf.add(buttom);
 		
 		
 		
 		
-		LIANXI_view.addComponentListener(new ComponentAdapter() {//拖动窗口监听，按钮、背景图随窗口大小自适应
-            public void componentResized(ComponentEvent e) {  
-               
-            	
-            	int width=LIANXI_view.getWidth();//获取窗口宽度
-                int height=LIANXI_view.getHeight();//获取窗口高度
-                Button_1.setBounds(width*23/90, height*13/15, width*7/45, height/10);//按钮随窗口大小自适应
-                Button_2.setBounds(width*23/45, height*13/15, width*7/45, height/10);
-               
-                Label_yulan_photo.setBounds(width*2/3, height/3, width/3, height/3);
-               
-            }  
-
-        }); 
+		
 		
 		
 	}
+	
+	//可单独运行，查看界面效果
+	/*public static void main(String[] args) {
+		LIANXI_view lxv = new LIANXI_view(new Dimension(300, 300), new Dimension(700, 500));
+		
+	}*/
 	
 }
