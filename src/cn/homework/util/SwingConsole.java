@@ -11,6 +11,7 @@ public class SwingConsole {
 			public void run() {
 				f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 				f.setVisible(true);
+				f.setSize(500, 400);
 			}
 		});
 	}

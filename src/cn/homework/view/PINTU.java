@@ -81,7 +81,7 @@ public class PINTU {
 			public void actionPerformed(ActionEvent e) {
 	       
 				
-			    LIANXI_view view1 = new  LIANXI_view();
+			  //  SelectPractice view1 = new  SelectPractice();
 				
 			}
 		});
@@ -92,7 +92,7 @@ public class PINTU {
 		JButton Button_2 = new JButton("\u95EF\u5173\u6A21\u5F0F");//闯关模式的按钮
 		Button_2.addActionListener(new ActionListener() {//闯关模式的按钮事件
 			public void actionPerformed(ActionEvent e) {
-				
+				PINTU.dispose();
 				CHUANGGUAN_view view2 = new CHUANGGUAN_view();
 				
 			}
