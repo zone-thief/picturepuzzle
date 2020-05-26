@@ -10,11 +10,16 @@ import java.awt.event.ActionEvent;
 import javax.swing.JPanel;
 import javax.swing.BoxLayout;
 import java.awt.Color;
+import java.awt.Dimension;
+
 import javax.swing.UIManager;
 import java.awt.Font;
 import java.awt.Image;
 
 import javax.swing.border.EmptyBorder;
+
+import cn.homework.util.SwingConsole;
+
 import java.awt.Toolkit;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
@@ -30,22 +35,15 @@ import java.awt.SystemColor;
 
 public class PINTU {
 
-	private JFrame PINTU;
-
+	public JFrame PINTU;
+	
 	/**
 	 * Launch the application.
 	 */
 	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					PINTU window = new PINTU();
-					window.PINTU.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
+		PINTU window = new PINTU();
+		
+		SwingConsole.run(window.PINTU);
 	}
 
 	/**
@@ -68,8 +66,6 @@ public class PINTU {
 		
 		PINTU.setTitle("\u62FC\u56FE\u6E38\u620F");
 		PINTU.setBackground(Color.WHITE);//框架背景
-		PINTU.setBounds(100, 100, 450, 300);
-		PINTU.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		PINTU.getContentPane().setLayout(null);//将框架的布局管理器关掉
 		
 		
@@ -79,10 +75,12 @@ public class PINTU {
 		Button_1.setBackground(Color.GREEN);//按钮背景色
 		Button_1.addActionListener(new ActionListener() {//练习模式的按钮事件,即扩展具体功能
 			public void actionPerformed(ActionEvent e) {
-	       
-				
-			  //  SelectPractice view1 = new  SelectPractice();
-				
+				/**
+				 * 关闭当前窗口，打开选择图片的窗口
+				 */
+				closeThis();
+			    SelectPractice s = new SelectPractice("选择当前图片");
+			    SwingConsole.run(s);
 			}
 		});
 		Button_1.setBounds(165, 60, 120, 30);//按钮位置
