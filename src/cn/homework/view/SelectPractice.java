@@ -1,49 +1,69 @@
 package cn.homework.view;
 
-import javax.swing.JFrame;
-import javax.swing.JButton;
 import java.awt.BorderLayout;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
-import javax.swing.JPanel;
-import javax.swing.JRadioButton;
-import javax.swing.SpringLayout;
-import javax.swing.BorderFactory;
-import javax.swing.BoxLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
-import javax.swing.UIManager;
-import java.awt.Font;
-import java.awt.Image;
-
-import javax.swing.border.EmptyBorder;
+import javax.swing.BorderFactory;
+import javax.swing.ButtonGroup;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
 
 import cn.homework.util.SwingConsole;
+import cn.homework.util.border.MyBorder;
 import cn.homework.util.button.ThumbButton;
 import cn.homework.util.image.ImageView;
 import cn.homework.util.layout.RowLayout;
 import cn.homework.util.panel.BottomBar;
-import cn.homework.util.panel.ChoicePanel;
 import cn.homework.util.panel.MyPanel;
 
-import java.awt.Toolkit;
-import javax.swing.ImageIcon;
-import javax.swing.JLabel;
-import javax.swing.SwingConstants;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+class ChoicePanel extends JPanel{
+	
+	JRadioButton radio1 = new JRadioButton("简单");
+	JRadioButton radio2 = new JRadioButton("中等");
+	JRadioButton radio3 = new JRadioButton("困难");
+	ButtonGroup bg = new ButtonGroup();
+	
+	ChoicePanel() {
+		this.setLayout(new GridLayout(3, 1));
+		this.setBorder(BorderFactory.createTitledBorder("难度"));
+		this.setPreferredSize(new Dimension(400, 0));
+		MyBorder.addMargin(this, 10);
+		MyBorder.addPadding(this, 10);
+		this.add(radio1);
+		this.add(radio2);
+		this.add(radio3);
+		bg.add(radio1);
+		bg.add(radio2);
+		bg.add(radio3);
+		radio1.setSelected(true);
+	}
+	
+	String getValue() {
+		if(radio1.isSelected()) {
+			return radio1.getText();
+		} else if(radio2.isSelected()) {
+			return radio2.getText();
+		} else {
+			return radio2.getText();
+		}
+	}
+}
 
-import java.io.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
 
 public class SelectPractice extends JFrame{
 	
-	private static final long serialVersionUID = 5551321679060060033L;
-
 	//显示大图区域
 	ImageView canvas = new ImageView();
 	//预览图
@@ -51,7 +71,7 @@ public class SelectPractice extends JFrame{
 	// 图标按钮组
 	List<ThumbButton> buttons = new ArrayList<ThumbButton>(); //存放所有的练习素材
 	// 难度选择页
-	JPanel choice = new ChoicePanel();
+	ChoicePanel choice = new ChoicePanel();
 	// 底部确定取消栏
 	BottomBar bottomBar = new BottomBar();
 	
@@ -69,7 +89,7 @@ public class SelectPractice extends JFrame{
 		topBar.padding(10).preferredHeight(80);
 		JButton prePage = new JButton("<");
 		JButton nextPage = new JButton(">");
-		prePage.addActionListener(new ActionListener(){
+		prePage.addActionListener(new ActionListener(){  // 为上一页按扭添加事件
 			@Override
 			public void actionPerformed(ActionEvent e){
 				if(curPage > 0) {
@@ -78,10 +98,10 @@ public class SelectPractice extends JFrame{
 				}
 			}
 		});
-		nextPage.addActionListener(new ActionListener(){
+		nextPage.addActionListener(new ActionListener(){ // 为下一页按扭添加事件
 			@Override
 			public void actionPerformed(ActionEvent e){
-				if(curPage < buttons.size() / 4) {
+				if(curPage < buttons.size() / 7) {
 					curPage++;
 					updateThumbBar();
 				}
@@ -97,7 +117,7 @@ public class SelectPractice extends JFrame{
 		
 		
 		MyPanel main = new MyPanel();
-		main.setLayout(new RowLayout(30));
+		main.setLayout(new GridLayout(1, 2));
 		main.padding(10);
 		root.add(main, BorderLayout.CENTER);
 		
@@ -115,7 +135,7 @@ public class SelectPractice extends JFrame{
 		root.add(bottomBar, BorderLayout.PAGE_END);
 		
 		ThumbClickListener clickListener = new ThumbClickListener();
-        // 加载 images 文件夹下的图片 ( 本地文件方式 )
+        // 加载 practise 文件夹下的图片 ( 本地文件方式 )
         File imageDir = new File("practise");
         File[] imageFiles = imageDir.listFiles();
         for(File f: imageFiles)
@@ -129,6 +149,7 @@ public class SelectPractice extends JFrame{
             button.addMouseListener( clickListener );
         }
         
+        modifyBottomBar();
         updateThumbBar();
 	}
 	private class ThumbClickListener extends MouseAdapter
@@ -161,12 +182,12 @@ public class SelectPractice extends JFrame{
 	
 	private void updateThumbBar() {
 		thumbBar.removeAll();
-		if(curPage == buttons.size() / 4) {
-			for(int i = curPage*4; i < buttons.size(); i++) {
+		if(curPage == buttons.size() / 7) {
+			for(int i = curPage*7; i < buttons.size(); i++) {
 				thumbBar.add(buttons.get(i), "auto");
 			}
 		} else {
-			for(int i = curPage*4; i < curPage*4 + 4; i++) {
+			for(int i = curPage*7; i < curPage*7 + 7; i++) {
 				thumbBar.add(buttons.get(i), "auto");
 			}
 		}
@@ -174,8 +195,39 @@ public class SelectPractice extends JFrame{
 		thumbBar.repaint();
 	}
 	
-	public static void main(String[] args) {
-		SwingConsole console = new SwingConsole();
-		console.run(new SelectPractice("请选择图片"));
+	private void modifyBottomBar() {
+		bottomBar.cancelButton.addActionListener(new ActionListener() {  //为取消按扭绑定退回主界面的事件
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				dispose();
+				
+				PINTU window = new PINTU();
+				
+				SwingConsole.run(window.PINTU);
+				
+			}
+			
+		});
+		
+		bottomBar.confirmButton.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				String difficult = choice.getValue();
+				if(canvas.getImage() != null && difficult != null) {
+					int pattern;
+					if("简单".equals(difficult))
+						pattern = 3;
+					else if("中等".equals(difficult))
+						pattern = 4;
+					else
+						pattern = 5;
+					LIANXI_view lx = new LIANXI_view((BufferedImage)canvas.getImage(), pattern);
+					dispose();
+				}
+			}
+			
+		});
 	}
 }

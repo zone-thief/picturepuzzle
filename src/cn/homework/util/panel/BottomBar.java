@@ -6,8 +6,8 @@ import javax.swing.SpringLayout;
 
 public class BottomBar extends MyPanel{
 	
-	JButton confirmButton = new JButton("确定");
-	JButton cancelButton = new JButton("取消");
+	public JButton confirmButton = new JButton("确定");
+	public JButton cancelButton = new JButton("取消");
 	
 	public BottomBar() {
 		this.padding(10).preferredHeight(40);
