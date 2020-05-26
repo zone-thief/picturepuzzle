@@ -37,7 +37,9 @@ public class ChoicePanel extends JPanel{
 		} else if(radio2.isSelected()) {
 			return radio2.getText();
 		} else {
-			return radio2.getText();
+			return radio3.getText();
 		}
 	}
+	
+	
 }

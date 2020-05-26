@@ -1,6 +1,5 @@
 package cn.homework.util.panel;
 
-import java.awt.Button;
 import java.awt.GridLayout;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -13,6 +12,7 @@ import javax.swing.JPanel;
 
 import cn.homework.util.ImageCut;
 import cn.homework.util.button.PPButton;
+
 
 public class OperationPanel extends JPanel{
 	PPButton[] button; // 按钮数组
@@ -33,7 +33,7 @@ public class OperationPanel extends JPanel{
 	}
 	
 	public void sliceRandom(BufferedImage image) {
-		ImageCut.cutImage(image, pattern, "slice");
+		ImageCut.cutImage(image, pattern, "slice"); //将给定的图片按照指定的模式切分到指定路径里
 		this.removeAll();
 		this.updateUI();
 		this.setLayout(new GridLayout(pattern, pattern));
