@@ -26,40 +26,8 @@ import cn.homework.util.button.ThumbButton;
 import cn.homework.util.image.ImageView;
 import cn.homework.util.layout.RowLayout;
 import cn.homework.util.panel.BottomBar;
+import cn.homework.util.panel.ChoicePanel;
 import cn.homework.util.panel.MyPanel;
-
-class ChoicePanel extends JPanel{
-	
-	JRadioButton radio1 = new JRadioButton("简单");
-	JRadioButton radio2 = new JRadioButton("中等");
-	JRadioButton radio3 = new JRadioButton("困难");
-	ButtonGroup bg = new ButtonGroup();
-	
-	ChoicePanel() {
-		this.setLayout(new GridLayout(3, 1));
-		this.setBorder(BorderFactory.createTitledBorder("难度"));
-		this.setPreferredSize(new Dimension(400, 0));
-		MyBorder.addMargin(this, 10);
-		MyBorder.addPadding(this, 10);
-		this.add(radio1);
-		this.add(radio2);
-		this.add(radio3);
-		bg.add(radio1);
-		bg.add(radio2);
-		bg.add(radio3);
-		radio1.setSelected(true);
-	}
-	
-	String getValue() {
-		if(radio1.isSelected()) {
-			return radio1.getText();
-		} else if(radio2.isSelected()) {
-			return radio2.getText();
-		} else {
-			return radio2.getText();
-		}
-	}
-}
 
 
 public class SelectPractice extends JFrame{
