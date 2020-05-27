@@ -4,10 +4,13 @@ import java.awt.EventQueue;
 
 import javax.swing.JFrame;
 import javax.swing.JButton;
+import javax.swing.JFileChooser;
+
 import java.awt.BorderLayout;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import javax.swing.JPanel;
+import javax.imageio.ImageIO;
 import javax.swing.BoxLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -17,18 +20,22 @@ import java.awt.Font;
 import java.awt.Image;
 
 import javax.swing.border.EmptyBorder;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 import cn.homework.util.SwingConsole;
+import cn.homework.util.TimeFormat;
 
 import java.awt.Toolkit;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.SwingConstants;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 import java.io.*;
-
+import java.sql.Time;
+import java.util.Random;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.SystemColor;
@@ -91,7 +98,26 @@ public class PINTU {
 		Button_2.addActionListener(new ActionListener() {//闯关模式的按钮事件
 			public void actionPerformed(ActionEvent e) {
 				PINTU.dispose();
-				CHUANGGUAN_view view2 = new CHUANGGUAN_view();
+				
+				//TODO 现在仍使用practise的文件中的图片测试
+				File[] imageFiles = SelectPractice.getAllIamgeFiles("practise");
+				Image[] imageArr = new Image[7];
+				int i;
+				for(i = 0; i < 7; i++)
+				{
+					//闯关模式设有7关，先在image文件夹中随机选取7张图片
+					long randomNum = System.currentTimeMillis(); 
+					try {
+						int index = (int)randomNum%7;
+						imageArr[i] = ImageIO.read(imageFiles[index]);
+					} catch (IOException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+				}
+				
+				CHUANGGUAN_view view2 = new CHUANGGUAN_view(imageArr, 3, new TimeFormat(1, 30));
+				SwingConsole.run(view2);
 				
 			}
 		});
@@ -105,13 +131,34 @@ public class PINTU {
 		button_3.addActionListener(new ActionListener() {//添加图片的按钮事件
 			public void actionPerformed(ActionEvent e) {
 				
-					
-				try {
-					ADD_photo view3 = new ADD_photo();
-				} catch (IOException e1) {
-					// TODO 自动生成的 catch 块
-					e1.printStackTrace();
-				}
+				JFileChooser chooser = new JFileChooser();
+		        chooser.setFileFilter(new FileNameExtensionFilter("JPG文件", "jpg"));
+		        int ret = chooser.showOpenDialog(PINTU);
+		        if(ret == JFileChooser.APPROVE_OPTION){
+		        	File file = chooser.getSelectedFile();
+		        	FileInputStream fis = null;
+		        	FileOutputStream fos = null;
+		        	try {
+		        		fis = new FileInputStream(file);
+		        		fos = new FileOutputStream("practise\\" + file.getName());
+		        		int len = 0;
+		        		byte[] buf = new byte[1024];
+		        		while((len = fis.read(buf)) != -1) {
+		        			fos.write(buf, 0, len);
+		        		}
+		        	} catch(IOException exception) {
+		        		exception.printStackTrace();
+		        	} finally {
+		        		try {
+							fis.close();
+							fos.close();
+						} catch (IOException e1) {
+							e1.printStackTrace();
+						}
+		        		
+		        	}
+		        	JOptionPane.showMessageDialog(PINTU, "添加成功");
+		        }
 				
 			}
 		});
@@ -147,6 +194,9 @@ public class PINTU {
             }  
 
         }); 
+		
+	
+
 	}
 }
 

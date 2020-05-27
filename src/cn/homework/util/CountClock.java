@@ -1,27 +1,34 @@
 package cn.homework.util;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.DecimalFormat;
 
 
 import javax.swing.JButton;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
+
+import cn.homework.util.panel.OperationPanel;
+import cn.homework.view.CHUANGGUAN_view;
+
 
 //计时器类
 public class CountClock {
 
 	public static final boolean LIANXI = true;
-	public static final boolean CHUANGGUAN = true;
-	private boolean StopCountFlag = false;
+	public static final boolean CHUANGGUAN = false;
+	private volatile boolean StopCountFlag = false;
 	
 	JLabel TimeLabel;			//显示时间的标签
-	int time ;					//接收的输入的时间
+	TimeFormat time ;			//接收的输入的时间
 	int min;					//分
 	int sec;					//秒
 	boolean CountModel;			//计时方向		true:练习模式	false:闯关模式
@@ -35,23 +42,43 @@ public class CountClock {
 	
 	JPanel jpanelTime;  //计时框的面板
 	JPanel jpanelButton;  //计时操作按钮的面板
+	OperationPanel operateArea;
 	
-	
-	public CountClock(int time, JPanel jpanelTime, JPanel jpanelButton, boolean CountModel) {
+	public CountClock(TimeFormat time, JPanel jpanelTime, boolean CountModel) {
 		super();
 		this.time = time;
+		this.min = time.getMin();
+		this.sec = time.getSec();
+		
 		this.jpanelTime = jpanelTime;
-		this.jpanelButton = jpanelButton;
 		this.CountModel = CountModel;
 		
 	}
 
+	public CountClock(TimeFormat time, JPanel jpanelTime, JPanel jpanelButton, boolean CountModel, OperationPanel operateArea) {
+		super();
+		this.time = time;
+		this.min = time.getMin();
+		this.sec = time.getSec();
+		
+		this.jpanelTime = jpanelTime;
+		this.jpanelButton = jpanelButton;
+		this.operateArea = operateArea;
+		this.CountModel = CountModel;
+		
+	}
+	
 	//线程
 	TimerThread timerThread = new TimerThread();
 	Thread th;
 	
 	public void setStopCountFlag(boolean stopCountFlag) {
 		StopCountFlag = stopCountFlag;
+		if(stopCountFlag == false)
+		{
+			th = new Thread(timerThread);
+	    	th.start();
+		}
 	}
 
 	public boolean isStopCountFlag() {
@@ -66,7 +93,7 @@ public class CountClock {
 	public void init() {
 		
 		//显示时间
-		TimeLabel = new JLabel("00:00");
+		TimeLabel = new JLabel(time.toString());
 		TimeLabel.setFont(new Font("宋体",1,36));
 		TimeLabel.setPreferredSize(new Dimension(600, 100));
 		TimeLabel.setBackground(Color.white);
@@ -79,9 +106,6 @@ public class CountClock {
 		//练习模式
 		if(CountModel == LIANXI)
 		{
-    		min = time/60;
-        	sec = time%60;
-   
 	    	//开启一个新线程并执行
 	    	th = new Thread(timerThread);
 	    	th.start();
@@ -94,7 +118,8 @@ public class CountClock {
 			Start = new JButton("开始");
 			Start.setPreferredSize(preferredSize);//将按钮修改成设置好的尺寸
 			Start.addActionListener(new StartCountListener());//添加监听
-			//jpanelButton.add(Star);//添加按钮到面板*/
+			jpanelButton.setLayout(new GridLayout(1,2, 10, 0));
+			jpanelButton.add(Start);//添加按钮到面板*/
 					
 			//设置重置按钮
 			Reset = new JButton("重置");
@@ -103,6 +128,8 @@ public class CountClock {
 			//设置暂停按钮
 			Stop = new JButton("暂停");
 			Stop.addActionListener(new StopActionListener());
+			Stop.setEnabled(false);
+			jpanelButton.add(Stop);
 			
 			//设置继续按钮
 			KeepOn = new JButton("继续");
@@ -112,14 +139,35 @@ public class CountClock {
 	
 	}
 	
+	public void setTime(TimeFormat time) {
+		this.time = time;
+		
+		TimeLabel.setText(time.toString());
+		this.min = time.getMin();
+		this.sec = time.getSec();
+	}
+
+
+	public int getTime_Min() {
+		return min;
+	}
 	
+	public int getTime_Sec() {
+		return sec;
+	}
 	
+	public String getTime() {
+		return TimeLabel.getText();
+	}
+	
+
+
 	//计时线程执行的程序
 	class TimerThread implements Runnable{
 		public void run() {
 			while(StopCountFlag == false) {
 				//顺序计时模式
-				if(CountModel == true) {
+				if(CountModel == LIANXI) {
 					if(sec==60) {
 			        	min=min+1;
 			        	sec=sec-60;
@@ -148,10 +196,8 @@ public class CountClock {
 					//TODO	闯关模式下需要更改
 					if(sec==0 && min==0) {
 						TimeLabel.setText("00:00");
-						/*jpanelButton.remove(Stop);
-						jpanelButton.remove(KeepOn);
-						jpanelTime.updateUI();
-						Start.setEnabled(true);*/
+						StopCountFlag = true;
+						
 						return;
 					}
 					
@@ -171,32 +217,31 @@ public class CountClock {
 	 class StartCountListener implements ActionListener {
 	        @Override
 	        public void actionPerformed(ActionEvent e) {
+	        	
+	        	CHUANGGUAN_view jf = (CHUANGGUAN_view) operateArea.getTopLevelAncestor();
+	        	jf.setStartGameFlag(true);
+	        	
+	        	
 	        	//将开始按钮设为不可用
 	        	Start.setEnabled(false);
-	        	//删除原面板
-
-	        	jpanelButton.remove(Start);
+	        	Stop.setEnabled(true);
 	        	
-	        	//添加重置跟暂停
-	        	jpanelButton.add(Reset);
-	        	jpanelButton.add(Stop);
-	        	//把标签放到面板中
-	        	jpanelTime.add(TimeLabel);  
-	        
-	        	//刷新面板  
+	        	operateArea.setListener(true);
+	        	
+	        	//刷新面板
 	        	jpanelTime.updateUI();
 	        	jpanelButton.updateUI();
+	        	
+	        	//闯关模式下点击开始按钮就计时
+	        	if(CountModel == CHUANGGUAN)
+	        	{
+			    	th = new Thread(timerThread);
+			    	th.start();
+	        	}
 
-//规定的时间
-	        	//接收输入的字符，即时间
-	        		min = time/60;
-	            	sec = time%60;
-	       
-	        	//开启一个新线程并执行
-	        	th = new Thread(timerThread);
-	        	th.start();
 	        }
 	    }
+	 
 	 
 	 //TODO 下列三个事件在闯关模式有应用
 	 //重置计时事件
@@ -233,7 +278,9 @@ public class CountClock {
 				th.interrupt();
 				// 将暂停按钮变成继续按钮
 				jpanelButton.remove(Stop);
-				jpanelButton.add(KeepOn);	
+				jpanelButton.add(KeepOn);
+				operateArea.setListener(false);
+				
 				jpanelButton.updateUI();
 			}
 	    	
@@ -249,18 +296,13 @@ public class CountClock {
 	    		th.start();
 	    		// 讲继续按钮变成暂停按钮
 				jpanelButton.remove(KeepOn);
-				jpanelButton.add(Stop);	
+				jpanelButton.add(Stop);
+				operateArea.setListener(true);
+				
 				jpanelButton.updateUI();
 	    	}
 	    	
 	    }
 	
-	 //TODO	可自己添加或删除各类按钮加不加入按钮面板中
-	 public void addStartButtonToJPanelButton() {
-		 jpanelButton.add(Start);
-	 }
-	 
-	 public void addStopButtonToJPanelButton() {
-		 jpanelButton.add(Stop);
-	 }
+
 }

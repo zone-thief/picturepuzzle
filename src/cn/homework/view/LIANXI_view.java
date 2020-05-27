@@ -12,37 +12,37 @@ import java.awt.event.ActionListener;
 
 import cn.homework.util.CountClock;
 import cn.homework.util.SwingConsole;
+import cn.homework.util.TimeFormat;
 import cn.homework.util.image.ImageView;
-
+import cn.homework.util.panel.MyPanel;
 import cn.homework.util.panel.OperationPanel;
 
 import java.awt.image.BufferedImage;
 
-public class LIANXI_view {
+public class LIANXI_view extends JFrame{
 	
-	JPanel jpanelTime = new JPanel();
-	CountClock cc = new CountClock(0, jpanelTime, null, CountClock.LIANXI);
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	JPanel jpanelTime = new MyPanel();
+	CountClock cc = new CountClock(new TimeFormat(0, 0), jpanelTime, CountClock.LIANXI);
 	
-	private JFrame jf = new JFrame();
+	private JPanel root;
 	
 	public LIANXI_view(BufferedImage image, int pattern) {
+		
+		root = (JPanel)this.getContentPane();
 		init(image, pattern);
-		SwingConsole.run(jf);
-	}
-	
-	
-	public void closeThis(){
-		jf.dispose();
 	}
 	
 	
 	public void init(BufferedImage image, int pattern) {
-		
-
+		//初始化计时器
 		cc.init();
 		
-		JPanel top = new JPanel();
-		JPanel buttom = new JPanel();
+		JPanel top = new MyPanel();
+		JPanel buttom = new MyPanel();
 		JButton back = new JButton("返回");
 		back.setPreferredSize(new Dimension(100, 100));
 		back.addActionListener(new Tomenu());
@@ -51,11 +51,14 @@ public class LIANXI_view {
 		top.add(jpanelTime);
 		top.add(back, BorderLayout.EAST);
 		
-		jf.add(top, BorderLayout.NORTH);
+		//顶部计时器与返回按钮的添加
+		root.add(top, BorderLayout.NORTH);
 		
+		//预览区域与拼图区域设置
 		ImageView previewArea = new ImageView();
 		previewArea.setImage(image);
 		OperationPanel operateArea  = new OperationPanel(image, pattern);
+		operateArea.setListener(true);
 		
 		new Thread( new Runnable() {
 			@Override
@@ -89,7 +92,7 @@ public class LIANXI_view {
 		buttom.add(previewArea);
 		buttom.add(operateArea);
 		
-		jf.add(buttom);
+		root.add(buttom);
 		
 	}
 
@@ -100,7 +103,7 @@ public class LIANXI_view {
 			// TODO Auto-generated method stub
 			cc.setStopCountFlag(true);
 			
-			jf.dispose();
+			dispose();
 			
 			PINTU window = new PINTU();
 			
@@ -112,7 +115,7 @@ public class LIANXI_view {
 	  
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			jf.dispose();
+			dispose();
 			// TODO Auto-generated method stub
 			SelectPractice s = new SelectPractice("选择当前图片");
 			SwingConsole.run(s);

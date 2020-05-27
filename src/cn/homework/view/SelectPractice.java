@@ -104,8 +104,10 @@ public class SelectPractice extends JFrame{
 		
 		ThumbClickListener clickListener = new ThumbClickListener();
         // 加载 practise 文件夹下的图片 ( 本地文件方式 )
-        File imageDir = new File("practise");
-        File[] imageFiles = imageDir.listFiles();
+        //File imageDir = new File("practise");
+        //File[] imageFiles = imageDir.listFiles();
+		
+		File[] imageFiles = getAllIamgeFiles("practise");
         for(File f: imageFiles)
         {
             ThumbButton button = new ThumbButton(f);
@@ -192,10 +194,17 @@ public class SelectPractice extends JFrame{
 					else
 						pattern = 5;
 					LIANXI_view lx = new LIANXI_view((BufferedImage)canvas.getImage(), pattern);
+					SwingConsole.run(lx);
 					dispose();
 				}
 			}
 			
 		});
+	}
+	
+	public static File[] getAllIamgeFiles(String path) {
+		File imageDir = new File(path);
+        File[] imageFiles = imageDir.listFiles();
+        return imageFiles;
 	}
 }
