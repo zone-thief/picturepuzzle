@@ -1,74 +1,51 @@
 package cn.homework.view;
 
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JButton;
 import java.awt.BorderLayout;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
 import javax.swing.JPanel;
-import javax.swing.JTextField;
-import javax.swing.BoxLayout;
-import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
-
-import javax.swing.UIManager;
-import java.awt.Font;
 import java.awt.GridLayout;
-import java.awt.Image;
-
-import javax.swing.border.Border;
-import javax.swing.border.EmptyBorder;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import cn.homework.util.CountClock;
+import cn.homework.util.SwingConsole;
+import cn.homework.util.image.ImageView;
 
-import java.awt.Toolkit;
-import javax.swing.ImageIcon;
-import javax.swing.JLabel;
-import javax.swing.SwingConstants;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import cn.homework.util.panel.OperationPanel;
 
-import java.io.*;
-
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
+import java.awt.image.BufferedImage;
 
 public class LIANXI_view {
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
 	
+	JPanel jpanelTime = new JPanel();
+	CountClock cc = new CountClock(0, jpanelTime, null, CountClock.LIANXI);
 	
-	private final boolean INCREASE = true;			//计时方向
 	private JFrame jf = new JFrame();
 	
-	public LIANXI_view(Dimension location, Dimension size) {
-		jf.setLocation(location.width, location.height);
-		jf.setSize(size);
-		jf.setTitle("练习模式");
-		
-		
-		init();
-		jf.setVisible(true);
+	public LIANXI_view(BufferedImage image, int pattern) {
+		init(image, pattern);
+		SwingConsole.run(jf);
 	}
 	
 	
 	public void closeThis(){
-		
+		jf.dispose();
 	}
 	
 	
-	public void init() {
-		JPanel jpanelTime = new JPanel();
-		CountClock cc = new CountClock(0, jpanelTime, null, INCREASE);
+	public void init(BufferedImage image, int pattern) {
+		
+
 		cc.init();
 		
 		JPanel top = new JPanel();
 		JPanel buttom = new JPanel();
 		JButton back = new JButton("返回");
 		back.setPreferredSize(new Dimension(100, 100));
+		back.addActionListener(new Tomenu());
 		
 		top.setLayout(new BorderLayout());
 		top.add(jpanelTime);
@@ -76,27 +53,70 @@ public class LIANXI_view {
 		
 		jf.add(top, BorderLayout.NORTH);
 		
-		JPanel previewArea = new JPanel();
-		JPanel operateArea = new JPanel();
+		ImageView previewArea = new ImageView();
+		previewArea.setImage(image);
+		OperationPanel operateArea  = new OperationPanel(image, pattern);
 		
-		previewArea.setBackground(Color.pink);
-		operateArea.setBackground(Color.orange);
+		new Thread( new Runnable() {
+			@Override
+			public void run() {
+				while(true)
+				{
+					try {
+						Thread.sleep(1000);
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					if( operateArea.check() == true ) {
+						cc.setStopCountFlag(true);
+						
+						JButton ctn = new JButton("继续");
+						JButton rtn = new JButton("返回");
+						
+						ctn.addActionListener(new CtnGame());
+						rtn.addActionListener(new Tomenu());
+						
+						JButton[] bs = {ctn, rtn};
+						JOptionPane.showOptionDialog(operateArea, "拼图完成", "选择", 1,3, null, bs, bs[0]);
+						break;
+					}
+				}
+			}
+		}).start();
 		
 		buttom.setLayout(new GridLayout(1, 2));
 		buttom.add(previewArea);
 		buttom.add(operateArea);
 		
-		
 		jf.add(buttom);
 		
-		
-		
+	}
+
+	class Tomenu implements ActionListener {
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			// TODO Auto-generated method stub
+			cc.setStopCountFlag(true);
+			
+			jf.dispose();
+			
+			PINTU window = new PINTU();
+			
+			SwingConsole.run(window.PINTU);			
+		}
 	}
 	
-	//可单独运行，查看界面效果
-	public static void main(String[] args) {
-		LIANXI_view lxv = new LIANXI_view(new Dimension(300, 300), new Dimension(700, 500));
-		
+	class CtnGame implements ActionListener {
+	  
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			jf.dispose();
+			// TODO Auto-generated method stub
+			SelectPractice s = new SelectPractice("选择当前图片");
+			SwingConsole.run(s);
+		}
+	    
 	}
-	
 }

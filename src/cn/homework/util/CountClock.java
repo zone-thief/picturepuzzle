@@ -13,44 +13,61 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
-//è®¡æ—¶å™¨ç±»
+//¼ÆÊ±Æ÷Àà
 public class CountClock {
 
-	JLabel TimeLabel;			//æ˜¾ç¤ºæ—¶é—´çš„æ ‡ç­¾
-	int time ;					//æ¥æ”¶çš„è¾“å…¥çš„æ—¶é—´
-	int min;					//åˆ†
-	int sec;					//ç§’
-	boolean CountDirection;		//è®¡æ—¶æ–¹å‘		true:é¡ºåºè®¡æ—¶	false:å€’è®¡æ—¶
+	public static final boolean LIANXI = true;
+	public static final boolean CHUANGGUAN = true;
+	private boolean StopCountFlag = false;
 	
-	//å››ä¸ªæŒ‰é’® ï¼Œå¯ä»¥ç”¨å¼€å§‹æ¸¸æˆã€é‡æ–°æ¸¸æˆã€æš‚åœæ¸¸æˆã€ç»§ç»­æ¸¸æˆæ›¿ä»£è¿™å››ä¸ªã€‚å¯¹åº”ç›‘å¬å™¨ä¹Ÿç»™
+	JLabel TimeLabel;			//ÏÔÊ¾Ê±¼äµÄ±êÇ©
+	int time ;					//½ÓÊÕµÄÊäÈëµÄÊ±¼ä
+	int min;					//·Ö
+	int sec;					//Ãë
+	boolean CountModel;			//¼ÆÊ±·½Ïò		true:Á·Ï°Ä£Ê½	false:´³¹ØÄ£Ê½
+	
+	
+	//ËÄ¸ö°´Å¥ £¬¿ÉÒÔÓÃ¿ªÊ¼ÓÎÏ·¡¢ÖØĞÂÓÎÏ·¡¢ÔİÍ£ÓÎÏ·¡¢¼ÌĞøÓÎÏ·Ìæ´úÕâËÄ¸ö¡£¶ÔÓ¦¼àÌıÆ÷Ò²¸ø
 	JButton Start;
 	JButton Reset;
 	JButton Stop;
 	JButton KeepOn;
 	
-	JPanel jpanelTime;  //è®¡æ—¶æ¡†çš„é¢æ¿
-	JPanel jpanelButton;  //è®¡æ—¶æ“ä½œæŒ‰é’®çš„é¢æ¿
+	JPanel jpanelTime;  //¼ÆÊ±¿òµÄÃæ°å
+	JPanel jpanelButton;  //¼ÆÊ±²Ù×÷°´Å¥µÄÃæ°å
 	
 	
-	public CountClock(int time, JPanel jpanelTime, JPanel jpanelButton, boolean CountDirection) {
+	public CountClock(int time, JPanel jpanelTime, JPanel jpanelButton, boolean CountModel) {
 		super();
 		this.time = time;
 		this.jpanelTime = jpanelTime;
 		this.jpanelButton = jpanelButton;
-		this.CountDirection = CountDirection;
+		this.CountModel = CountModel;
 		
 	}
 
-	//çº¿ç¨‹
+	//Ïß³Ì
 	TimerThread timerThread = new TimerThread();
 	Thread th;
-		
-	//åˆå§‹åŒ–çª—å£,å¹¶ä¼ å…¥è®¾å®šå¥½çš„æ—¶é—´ã€‚
+	
+	public void setStopCountFlag(boolean stopCountFlag) {
+		StopCountFlag = stopCountFlag;
+	}
+
+	public boolean isStopCountFlag() {
+		return StopCountFlag;
+	}
+
+	public Thread getth() {
+		return th;
+	}
+	
+	//³õÊ¼»¯´°¿Ú,²¢´«ÈëÉè¶¨ºÃµÄÊ±¼ä¡£
 	public void init() {
 		
-		//æ˜¾ç¤ºæ—¶é—´
+		//ÏÔÊ¾Ê±¼ä
 		TimeLabel = new JLabel("00:00");
-		TimeLabel.setFont(new Font("å®‹ä½“",1,36));
+		TimeLabel.setFont(new Font("ËÎÌå",1,36));
 		TimeLabel.setPreferredSize(new Dimension(600, 100));
 		TimeLabel.setBackground(Color.white);
 		TimeLabel.setHorizontalAlignment(JLabel.CENTER);
@@ -59,33 +76,50 @@ public class CountClock {
 		TimeLabel.setForeground(Color.blue);
 		jpanelTime.add(TimeLabel);
 		
-		//è®¾ç½®å¼€å§‹æŒ‰é’®
-		Dimension preferredSize = new Dimension(160, 25); //è®¾ç½®æŒ‰é’®å°ºå¯¸
-		Start = new JButton("å¼€å§‹");
-		Start.setPreferredSize(preferredSize);//å°†æŒ‰é’®ä¿®æ”¹æˆè®¾ç½®å¥½çš„å°ºå¯¸
-		Start.addActionListener(new StartCountListener());//æ·»åŠ ç›‘å¬
-		//jpanelButton.add(Star);//æ·»åŠ æŒ‰é’®åˆ°é¢æ¿*/
-				
-		//è®¾ç½®é‡ç½®æŒ‰é’®
-		Reset = new JButton("é‡ç½®");
-		Reset.addActionListener(new ResetCountListener());
+		//Á·Ï°Ä£Ê½
+		if(CountModel == LIANXI)
+		{
+    		min = time/60;
+        	sec = time%60;
+   
+	    	//¿ªÆôÒ»¸öĞÂÏß³Ì²¢Ö´ĞĞ
+	    	th = new Thread(timerThread);
+	    	th.start();
+		}
 		
-		//è®¾ç½®æš‚åœæŒ‰é’®
-		Stop = new JButton("æš‚åœ");
-		Stop.addActionListener(new StopActionListener());
-		
-		//è®¾ç½®ç»§ç»­æŒ‰é’®
-		KeepOn = new JButton("ç»§ç»­");
-		KeepOn.addActionListener(new KeepOnActionListener());
+		//´³¹ØÄ£Ê½
+		else {
+			//ÉèÖÃ¿ªÊ¼°´Å¥
+			Dimension preferredSize = new Dimension(160, 25); //ÉèÖÃ°´Å¥³ß´ç
+			Start = new JButton("¿ªÊ¼");
+			Start.setPreferredSize(preferredSize);//½«°´Å¥ĞŞ¸Ä³ÉÉèÖÃºÃµÄ³ß´ç
+			Start.addActionListener(new StartCountListener());//Ìí¼Ó¼àÌı
+			//jpanelButton.add(Star);//Ìí¼Ó°´Å¥µ½Ãæ°å*/
+					
+			//ÉèÖÃÖØÖÃ°´Å¥
+			Reset = new JButton("ÖØÖÃ");
+			Reset.addActionListener(new ResetCountListener());
+			
+			//ÉèÖÃÔİÍ£°´Å¥
+			Stop = new JButton("ÔİÍ£");
+			Stop.addActionListener(new StopActionListener());
+			
+			//ÉèÖÃ¼ÌĞø°´Å¥
+			KeepOn = new JButton("¼ÌĞø");
+			KeepOn.addActionListener(new KeepOnActionListener());
+		}
+
 	
 	}
 	
-	//è®¡æ—¶çº¿ç¨‹æ‰§è¡Œçš„ç¨‹åº
+	
+	
+	//¼ÆÊ±Ïß³ÌÖ´ĞĞµÄ³ÌĞò
 	class TimerThread implements Runnable{
 		public void run() {
-			while(true) {
-				//é¡ºåºè®¡æ—¶æ¨¡å¼
-				if(CountDirection == true) {
+			while(StopCountFlag == false) {
+				//Ë³Ğò¼ÆÊ±Ä£Ê½
+				if(CountModel == true) {
 					if(sec==60) {
 			        	min=min+1;
 			        	sec=sec-60;
@@ -93,25 +127,25 @@ public class CountClock {
 					DecimalFormat f1 = new DecimalFormat("00");
 					TimeLabel.setText(f1.format(min)+":"+f1.format(sec));
 					try {
-						Thread.sleep(1000);//çº¿ç¨‹ä¼‘çœ ä¸€ç§’ï¼Œç§’é’ˆ+1
+						Thread.sleep(1000);//Ïß³ÌĞİÃßÒ»Ãë£¬ÃëÕë+1
 						sec++;
 					}catch(InterruptedException e) {
 						break;
 				    }
 				}
-				//å€’è®¡æ—¶æ¨¡å¼
+				//µ¹¼ÆÊ±Ä£Ê½
 				else {
 					if(sec<0&&min>0) {
 						sec=59;
 						min--;
 					}
-					//è§„å®šæ˜¾ç¤ºçš„æ ¼å¼
-					//è®©æ—¶é—´ä¾¿ç­¾æ˜¾ç¤ºæ—¶é—´ï¼Œæ¯ç§’åˆ·æ–°ä¸€æ¬¡
+					//¹æ¶¨ÏÔÊ¾µÄ¸ñÊ½
+					//ÈÃÊ±¼ä±ãÇ©ÏÔÊ¾Ê±¼ä£¬Ã¿ÃëË¢ĞÂÒ»´Î
 					DecimalFormat f1 = new DecimalFormat("00");
 					TimeLabel.setText(f1.format(min)+":"+f1.format(sec));
 					
-					//åˆ¤æ–­æ—¶é—´æ˜¯å¦èµ°å®Œï¼Œèµ°å®Œå°±åˆ é™¤æš‚åœæŒ‰é’®
-					//TODO	é—¯å…³æ¨¡å¼ä¸‹éœ€è¦æ›´æ”¹
+					//ÅĞ¶ÏÊ±¼äÊÇ·ñ×ßÍê£¬×ßÍê¾ÍÉ¾³ıÔİÍ£°´Å¥
+					//TODO	´³¹ØÄ£Ê½ÏÂĞèÒª¸ü¸Ä
 					if(sec==0 && min==0) {
 						TimeLabel.setText("00:00");
 						/*jpanelButton.remove(Stop);
@@ -122,7 +156,7 @@ public class CountClock {
 					}
 					
 					try {
-						Thread.sleep(1000);//çº¿ç¨‹ä¼‘çœ ä¸€ç§’ï¼Œç§’é’ˆ-1
+						Thread.sleep(1000);//Ïß³ÌĞİÃßÒ»Ãë£¬ÃëÕë-1
 						sec--;
 					}catch(InterruptedException e) {
 						break;
@@ -132,72 +166,72 @@ public class CountClock {
 		}
 	}
 	
-	//TODO éœ€è¦å°†å¼€å§‹è®¡æ—¶äº‹ä»¶æ·»åŠ åˆ°å›¾ç‰‡é€‰æ‹©ç¡®è®¤çš„æŒ‰é’®ä¸Š
-	//å¼€å§‹è®¡æ—¶æŒ‰é’®æŒ‰é’®å•å‡»äº‹ä»¶
+	//TODO ĞèÒª½«¿ªÊ¼¼ÆÊ±ÊÂ¼şÌí¼Óµ½Í¼Æ¬Ñ¡ÔñÈ·ÈÏµÄ°´Å¥ÉÏ
+	//¿ªÊ¼¼ÆÊ±°´Å¥°´Å¥µ¥»÷ÊÂ¼ş
 	 class StartCountListener implements ActionListener {
 	        @Override
 	        public void actionPerformed(ActionEvent e) {
-	        	//å°†å¼€å§‹æŒ‰é’®è®¾ä¸ºä¸å¯ç”¨
+	        	//½«¿ªÊ¼°´Å¥ÉèÎª²»¿ÉÓÃ
 	        	Start.setEnabled(false);
-	        	//åˆ é™¤åŸé¢æ¿
+	        	//É¾³ıÔ­Ãæ°å
 
 	        	jpanelButton.remove(Start);
 	        	
-	        	//æ·»åŠ é‡ç½®è·Ÿæš‚åœ
+	        	//Ìí¼ÓÖØÖÃ¸úÔİÍ£
 	        	jpanelButton.add(Reset);
 	        	jpanelButton.add(Stop);
-	        	//æŠŠæ ‡ç­¾æ”¾åˆ°é¢æ¿ä¸­
+	        	//°Ñ±êÇ©·Åµ½Ãæ°åÖĞ
 	        	jpanelTime.add(TimeLabel);  
 	        
-	        	//åˆ·æ–°é¢æ¿  
+	        	//Ë¢ĞÂÃæ°å  
 	        	jpanelTime.updateUI();
 	        	jpanelButton.updateUI();
 
-//è§„å®šçš„æ—¶é—´
-	        	//æ¥æ”¶è¾“å…¥çš„å­—ç¬¦ï¼Œå³æ—¶é—´
+//¹æ¶¨µÄÊ±¼ä
+	        	//½ÓÊÕÊäÈëµÄ×Ö·û£¬¼´Ê±¼ä
 	        		min = time/60;
 	            	sec = time%60;
 	       
-	        	//å¼€å¯ä¸€ä¸ªæ–°çº¿ç¨‹å¹¶æ‰§è¡Œ
+	        	//¿ªÆôÒ»¸öĞÂÏß³Ì²¢Ö´ĞĞ
 	        	th = new Thread(timerThread);
 	        	th.start();
 	        }
 	    }
 	 
-	 //TODO ä¸‹åˆ—ä¸‰ä¸ªäº‹ä»¶åœ¨é—¯å…³æ¨¡å¼æœ‰åº”ç”¨
-	 //é‡ç½®è®¡æ—¶äº‹ä»¶
+	 //TODO ÏÂÁĞÈı¸öÊÂ¼şÔÚ´³¹ØÄ£Ê½ÓĞÓ¦ÓÃ
+	 //ÖØÖÃ¼ÆÊ±ÊÂ¼ş
 	 class ResetCountListener implements ActionListener {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// ç»ˆæ­¢çº¿ç¨‹
+				// ÖÕÖ¹Ïß³Ì
 				th.interrupt();
 				timerThread = new TimerThread();
-				// åˆ é™¤é¢æ¿ä¸­çš„æ—¶é—´æ˜¾ç¤ºã€é‡ç½®æŒ‰é’®ã€æš‚åœæŒ‰é’®ã€ç»§ç»­æŒ‰é’®
+				// É¾³ıÃæ°åÖĞµÄÊ±¼äÏÔÊ¾¡¢ÖØÖÃ°´Å¥¡¢ÔİÍ£°´Å¥¡¢¼ÌĞø°´Å¥
 				jpanelTime.remove(TimeLabel);
 				jpanelButton.remove(Reset);
 				jpanelButton.remove(Stop);
 				jpanelButton.remove(KeepOn);
 				
-				// æ·»åŠ å¼€å§‹æŒ‰é’®å’Œåˆå§‹æ—¶é—´æ˜¾ç¤º
+				// Ìí¼Ó¿ªÊ¼°´Å¥ºÍ³õÊ¼Ê±¼äÏÔÊ¾
 				jpanelButton.add(Start);
 				jpanelTime.add(TimeLabel);
 				TimeLabel.setText("00:00");
 				Start.setEnabled(true);
 				
-	        	// åˆ·æ–°é¢æ¿
+	        	// Ë¢ĞÂÃæ°å
 	        	jpanelTime. updateUI();
 	        	jpanelButton.updateUI();
 			}
 	    }
 	 
-	 //æš‚åœè®¡æ—¶äº‹ä»¶
+	 //ÔİÍ£¼ÆÊ±ÊÂ¼ş
 	 class StopActionListener implements ActionListener {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// ç»ˆæ­¢çº¿ç¨‹
+				// ÖÕÖ¹Ïß³Ì
 				th.interrupt();
-				// å°†æš‚åœæŒ‰é’®å˜æˆç»§ç»­æŒ‰é’®
+				// ½«ÔİÍ£°´Å¥±ä³É¼ÌĞø°´Å¥
 				jpanelButton.remove(Stop);
 				jpanelButton.add(KeepOn);	
 				jpanelButton.updateUI();
@@ -205,15 +239,15 @@ public class CountClock {
 	    	
 	    }
 
-	 //ç»§ç»­è®¡æ—¶äº‹ä»¶
+	 //¼ÌĞø¼ÆÊ±ÊÂ¼ş
 	 class KeepOnActionListener implements ActionListener {
 	    	
 	    	@Override
 	    	public void actionPerformed(ActionEvent e) {
-	    		// ç»§ç»­çº¿ç¨‹
+	    		// ¼ÌĞøÏß³Ì
 	    		th = new Thread(timerThread);
 	    		th.start();
-	    		// è®²ç»§ç»­æŒ‰é’®å˜æˆæš‚åœæŒ‰é’®
+	    		// ½²¼ÌĞø°´Å¥±ä³ÉÔİÍ£°´Å¥
 				jpanelButton.remove(KeepOn);
 				jpanelButton.add(Stop);	
 				jpanelButton.updateUI();
@@ -221,7 +255,7 @@ public class CountClock {
 	    	
 	    }
 	
-	 //TODO	å¯è‡ªå·±æ·»åŠ æˆ–åˆ é™¤å„ç±»æŒ‰é’®åŠ ä¸åŠ å…¥æŒ‰é’®é¢æ¿ä¸­
+	 //TODO	¿É×Ô¼ºÌí¼Ó»òÉ¾³ı¸÷Àà°´Å¥¼Ó²»¼ÓÈë°´Å¥Ãæ°åÖĞ
 	 public void addStartButtonToJPanelButton() {
 		 jpanelButton.add(Start);
 	 }
