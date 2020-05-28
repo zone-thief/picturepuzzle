@@ -44,6 +44,8 @@ public class CountClock {
 	JPanel jpanelButton;  //计时操作按钮的面板
 	OperationPanel operateArea;
 	
+	
+
 	public CountClock(TimeFormat time, JPanel jpanelTime, boolean CountModel) {
 		super();
 		this.time = time;
@@ -84,9 +86,9 @@ public class CountClock {
 	public boolean isStopCountFlag() {
 		return StopCountFlag;
 	}
-
-	public Thread getth() {
-		return th;
+	
+	public void setOperateArea(OperationPanel operateArea) {
+		this.operateArea = operateArea;
 	}
 	
 	//初始化窗口,并传入设定好的时间。
