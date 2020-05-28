@@ -6,40 +6,31 @@ import java.awt.BorderLayout;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import javax.swing.JPanel;
-import javax.imageio.ImageIO;
-import javax.swing.BoxLayout;
-import java.awt.Color;
 import java.awt.Dimension;
 
-import javax.swing.UIManager;
-import java.awt.Font;
+
 import java.awt.GridLayout;
 import java.awt.Image;
 
-import javax.swing.border.EmptyBorder;
 
 import cn.homework.util.CountClock;
+import cn.homework.util.RankingList;
 import cn.homework.util.SwingConsole;
 import cn.homework.util.TimeFormat;
+import cn.homework.util.User;
 import cn.homework.util.image.ImageView;
 import cn.homework.util.panel.MyPanel;
 import cn.homework.util.panel.OperationPanel;
-import cn.homework.view.LIANXI_view.CtnGame;
-import cn.homework.view.LIANXI_view.Tomenu;
 
-import java.awt.Toolkit;
-import javax.swing.ImageIcon;
+
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-import javax.swing.SwingConstants;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
-import java.io.*;
-import java.util.Random;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 
 public class CHUANGGUAN_view extends JFrame{
 	/**
@@ -59,7 +50,8 @@ public class CHUANGGUAN_view extends JFrame{
 	private int imageArrIndex;
 	
 	private int levelPoint;
-	private int userPoiont;
+	private int userScore;
+	private String userName;
 	
 	private int pattern;
 	private static volatile boolean StartGameFlag;
@@ -71,13 +63,13 @@ public class CHUANGGUAN_view extends JFrame{
 	private int Level;
 	
 	private boolean QuitGameFlag;
-	private int initTime = 0;
+	
 	
 	ImageView previewArea = new ImageView();
 	OperationPanel operateArea;
 	
 	//每关递增的时间
-	public final int INCREASE_TIME = 30;
+	public final int INCREASE_TIME = 45;
 	
 	//图片数组，起始难度，起始时间
 	public CHUANGGUAN_view(Image[] imageArr, int pattern, TimeFormat time) {
@@ -91,8 +83,8 @@ public class CHUANGGUAN_view extends JFrame{
 		
 		this.time = time;
 		this.levelPoint = 10;
-		this.userPoiont = 0;
-		this.StartGameFlag = false;
+		this.userScore = 0;
+		CHUANGGUAN_view.StartGameFlag = false;
 		this.QuitGameFlag = false;
 		this.Level = 1;
 		this.setTitle("Level-" + Level);
@@ -125,12 +117,14 @@ public class CHUANGGUAN_view extends JFrame{
 							if(Level == 7)
 							{
 								JOptionPane.showMessageDialog(null, "恭喜！成功通关 ", "通关 ", JOptionPane.DEFAULT_OPTION);
+								userScore += levelPoint + cc.getTime_Min()*10;
+								updateRKL();
 								exit();
 								break;
 							}
 							//选择返回选项
 							if(flag == 0)
-								update();
+								updateFrame();
 							else {
 								exit();
 								break;
@@ -142,6 +136,7 @@ public class CHUANGGUAN_view extends JFrame{
 							if(cc.getTime() == "00:00")
 							{
 								JOptionPane.showMessageDialog(null, "超时警告 ", "失败 ", JOptionPane.ERROR_MESSAGE);
+								updateRKL();
 								exit();
 								break;
 								
@@ -154,17 +149,7 @@ public class CHUANGGUAN_view extends JFrame{
 		}).start();
 	}
 	
-	public void exit()
-	{
-		cc.setStopCountFlag(true);
-		
-		StartGameFlag = false;
-		dispose();
-		
-		PINTU window = new PINTU();
-		
-		SwingConsole.run(window.PINTU);
-	}
+	
 	
 	JLabel poiontArea = new JLabel();
 	JPanel top = new MyPanel();
@@ -185,7 +170,7 @@ public class CHUANGGUAN_view extends JFrame{
 		back.setPreferredSize(new Dimension(100, 100));
 		back.addActionListener(new Tomenu());
 		
-		poiontArea.setText("此关分数 :" + levelPoint + "    " + "玩家分数:" + userPoiont);
+		poiontArea.setText("此关分数 :" + levelPoint + "    " + "玩家分数:" + userScore);
 		top.setLayout(new GridLayout(1, 4, 10, 0));
 		
 		top.add(jpanelTime);
@@ -203,20 +188,21 @@ public class CHUANGGUAN_view extends JFrame{
 		
 	}
 
-	public void update() {
+	public void updateFrame() {
 		Level++;
 		this.setTitle("Level-" + Level);
 		imageArrIndex++;
 		
 		time.addSec(INCREASE_TIME);
-		userPoiont += levelPoint + cc.getTime_Min()*10;
+		userScore += levelPoint + cc.getTime_Min()*10;
 		levelPoint += 10;
-		poiontArea.setText("此关分数 :" + levelPoint + "    " + "玩家分数:" + userPoiont);
+		poiontArea.setText("此关分数 :" + levelPoint + "    " + "玩家分数:" + userScore);
 		pattern++;
 		
 		previewArea.setImage(imageArr[imageArrIndex]);
 		buttom.remove(operateArea);
 		operateArea = new OperationPanel((BufferedImage)imageArr[imageArrIndex], pattern);
+		cc.setOperateArea(operateArea);
 		operateArea.setListener(true);
 		buttom.add(operateArea);
 		
@@ -224,6 +210,48 @@ public class CHUANGGUAN_view extends JFrame{
 		root.repaint();
 		cc.setTime(time);
 		cc.setStopCountFlag(false);
+	}
+	
+	public void updateRKL(){
+		
+		userName = JOptionPane.showInputDialog( "请输入你的名字:");
+		
+		User currentUser = new User(userName, userScore);
+		RankingList rkl = new RankingList();
+		ArrayList<User> list = null;
+		//TODO 外部的展示逻辑
+		try {
+			list = rkl.readUserList();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		list.add(currentUser);
+		Collections.sort(list); //排序
+		try {
+			rkl.writeUserList(list);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		StringBuilder sb = new StringBuilder();
+		int i;
+		for(i = 0; i < list.size(); i++) {
+			sb.append(i+1 + ". " + list.get(i).getUsername() + " " + list.get(i).getScore() + "\n");
+		}
+		JOptionPane.showMessageDialog(this, sb.toString());
+	}
+	
+	
+	public void exit()	{
+		cc.setStopCountFlag(true);
+		
+		StartGameFlag = false;
+		dispose();
+		
+		PINTU window = new PINTU();
+		
+		SwingConsole.run(window.PINTU);
 	}
 	
 	class Tomenu implements ActionListener {
