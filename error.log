@@ -1,0 +1,10 @@
+Exception in thread "Thread-4" java.lang.ArrayIndexOutOfBoundsException: Index 1 out of bounds for length 1
+	at cn.homework.util.RankingList.readUserList(RankingList.java:24)
+	at cn.homework.view.CHUANGGUAN_view.updateRKL(CHUANGGUAN_view.java:223)
+	at cn.homework.view.CHUANGGUAN_view$1.run(CHUANGGUAN_view.java:138)
+	at java.base/java.lang.Thread.run(Thread.java:830)
+Exception in thread "Thread-7" java.lang.ArrayIndexOutOfBoundsException: Index 1 out of bounds for length 1
+	at cn.homework.util.RankingList.readUserList(RankingList.java:24)
+	at cn.homework.view.CHUANGGUAN_view.updateRKL(CHUANGGUAN_view.java:223)
+	at cn.homework.view.CHUANGGUAN_view$1.run(CHUANGGUAN_view.java:138)
+	at java.base/java.lang.Thread.run(Thread.java:830)
