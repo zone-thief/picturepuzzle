@@ -13,6 +13,10 @@ import cn.homework.util.image.ImageView;
  *
  */
 public class ThumbButton extends ImageView{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	public Image image;
 	
 	public ThumbButton(File file) {

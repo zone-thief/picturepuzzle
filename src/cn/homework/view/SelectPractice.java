@@ -14,14 +14,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.BorderFactory;
-import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
-import javax.swing.JRadioButton;
 
 import cn.homework.util.SwingConsole;
-import cn.homework.util.border.MyBorder;
 import cn.homework.util.button.ThumbButton;
 import cn.homework.util.image.ImageView;
 import cn.homework.util.layout.RowLayout;
@@ -32,6 +29,10 @@ import cn.homework.util.panel.MyPanel;
 
 public class SelectPractice extends JFrame{
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	//œ‘ æ¥ÛÕº«¯”Ú
 	ImageView canvas = new ImageView();
 	//‘§¿¿Õº

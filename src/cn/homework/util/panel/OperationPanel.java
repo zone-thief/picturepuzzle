@@ -13,9 +13,6 @@ import java.util.Random;
 
 import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import cn.homework.util.ImageCut;
@@ -24,6 +21,10 @@ import cn.homework.util.image.ImageView;
 
 
 public class OperationPanel extends JPanel{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	PPButton[] button; // 按钮数组
 	Image[] img; // 图片数组
 	int[] order; // 照片存放顺序

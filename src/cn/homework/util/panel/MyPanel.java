@@ -10,6 +10,10 @@ import javax.swing.JPanel;
 import cn.homework.util.border.MyBorder;
 
 public class MyPanel extends JPanel{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private Color bgColor;
 	
 	public MyPanel() {

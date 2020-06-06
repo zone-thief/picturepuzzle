@@ -1,25 +1,21 @@
 package cn.homework.view;
 
-import java.awt.EventQueue;
-
 import javax.swing.JFrame;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 
-import java.awt.BorderLayout;
+
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
-import javax.swing.JPanel;
-import javax.imageio.ImageIO;
-import javax.swing.BoxLayout;
-import java.awt.Color;
-import java.awt.Dimension;
 
-import javax.swing.UIManager;
+import javax.imageio.ImageIO;
+
+import java.awt.Color;
+
+
 import java.awt.Font;
 import java.awt.Image;
 
-import javax.swing.border.EmptyBorder;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import cn.homework.util.SwingConsole;
@@ -30,15 +26,10 @@ import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.SwingConstants;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 
 import java.io.*;
-import java.sql.Time;
-import java.util.Random;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
-import java.awt.SystemColor;
 
 public class PINTU {
 
@@ -106,9 +97,9 @@ public class PINTU {
 				for(i = 0; i < 7; i++)
 				{
 					//闯关模式设有7关，先在image文件夹中随机选取7张图片
-					long randomNum = System.currentTimeMillis(); 
+					int randomNum = Math.abs((int)(Math.random()*100));
 					try {
-						int index = (int)randomNum%7;
+						int index = (int)randomNum % imageFiles.length;
 						imageArr[i] = ImageIO.read(imageFiles[index]);
 					} catch (IOException e1) {
 						// TODO Auto-generated catch block
