@@ -97,9 +97,9 @@ public class PINTU {
 				for(i = 0; i < 7; i++)
 				{
 					//闯关模式设有7关，先在image文件夹中随机选取7张图片
-					int randomNum = Math.abs((int)Math.random());
+					int randomNum = Math.abs((int)(Math.random()*100));
 					try {
-						int index = (int)randomNum%7;
+						int index = (int)randomNum % imageFiles.length;
 						imageArr[i] = ImageIO.read(imageFiles[index]);
 					} catch (IOException e1) {
 						// TODO Auto-generated catch block
