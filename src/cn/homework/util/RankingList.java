@@ -2,23 +2,14 @@ package cn.homework.util;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.nio.Buffer;
 import java.util.ArrayList;
 
 
 public class RankingList {
-	/*
-	private User currentUser;
-
-	public RankingList(User currentUser) {
-		super();
-		this.currentUser = currentUser;
-	}
-	*/
+	
 	public ArrayList<User> readUserList() throws IOException {
 		ArrayList<User> userList = new ArrayList<User>();
 		

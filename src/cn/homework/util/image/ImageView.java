@@ -13,6 +13,10 @@ import javax.swing.JPanel;
  *
  */
 public class ImageView extends JPanel{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	public static final int FIT_XY = 0;
     public static final int FIT_CENTER = 1;
     public static final int FIT_CENTER_INSIDE = 2;

@@ -11,6 +11,10 @@ import javax.swing.JRadioButton;
 import cn.homework.util.border.MyBorder;
 
 public class ChoicePanel extends JPanel{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	public JRadioButton radio1 = new JRadioButton("简单");
 	public JRadioButton radio2 = new JRadioButton("中等");
 	public JRadioButton radio3 = new JRadioButton("困难");

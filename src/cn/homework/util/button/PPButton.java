@@ -1,11 +1,13 @@
 package cn.homework.util.button;
 
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
 
 import cn.homework.util.image.ImageView;
 
 public class PPButton extends ImageView{
+		/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 		int row; //按扭的横坐标
 		int col;  // 按扭的纵坐标
 		public void setRow(int row){
